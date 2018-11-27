@@ -36,6 +36,13 @@ length(destinos$url) # 358
 #########################################################
 #datos <- matrix(ncol = 9, nrow = 0)
 remDr$navigate(destinos$url[1])
+
+bus <- remDr$findElements("class", "transport-bus")
+
+bus[[1]]$clickElement()
+Sys.sleep(1)
+length(bus)
+
 Sys.sleep(15)
 for (i in 112:length(destinos$url)){
 
@@ -46,6 +53,10 @@ for (i in 112:length(destinos$url)){
   ############################
   remDr$navigate(destinos$url[i])
   Sys.sleep(10)
+  
+  bus <- remDr$findElements("class", "transport-bus")
+  if(length(bus) != 0) bus[[1]]$clickElement()
+  #Sys.sleep(1)
   
   ##################################
   # P A S O 4:                     #
