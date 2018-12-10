@@ -1,3 +1,7 @@
+##########################################
+# SCRIPT PARA LA OBTENCI'ON DE LOS DATOS #
+##########################################
+
 
 ######################
 # P A S O  # 1       #
@@ -24,10 +28,10 @@ origen.destino <- read.csv("norte_sur.csv")
 origen.destino$X <- NULL
 
 # Esto esta en otro script. Aquí ya determinamos que la fecha 
-destinos <- read.csv("viajes.csv") # Este script ya lo elaboramos!!
+destinos <- read.csv("viajes.csv") # Este Base ya se hizo en el otro script!!
 names(destinos) <- c("ID", "url")
 destinos$ID <- NULL
-fecha <- "30-Nov-18"
+fecha <- "30-Ene-19" #checar que sea la misma que la del otro script
 
 length(destinos$url) # 358
 
@@ -43,8 +47,11 @@ bus[[1]]$clickElement()
 Sys.sleep(1)
 length(bus)
 
+# Creamos un vector vacio
+datos <- c()
+
 Sys.sleep(15)
-for (i in 112:length(destinos$url)){
+for (i in 1:length(destinos$url)){
 
   ############################
   # P A S O  3:              #  
@@ -56,6 +63,7 @@ for (i in 112:length(destinos$url)){
   
   bus <- remDr$findElements("class", "transport-bus")
   if(length(bus) != 0) bus[[1]]$clickElement()
+  Sys.sleep(runif(1, min = 1.5, max = 2))
   #Sys.sleep(1)
   
   ##################################
