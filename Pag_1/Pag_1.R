@@ -51,6 +51,9 @@ length(bus)
 datos <- c()
 
 Sys.sleep(15)
+
+
+#programa <- function(i = 1) {
 for (i in 1:length(destinos$url)){
 
   ############################
@@ -93,15 +96,15 @@ for (i in 1:length(destinos$url)){
     ##############################################
     
     # Bajamos el Scroll hasta haber leído todo. 
-    w2 <- remDr$findElements("class", "provider-price ")
+    w2 <- remDr$findElements("class", "provider-price")
     viajes <- length(w2)
     remDr$executeScript("window.scrollTo(0, 5000)")
-    w2 <- remDr$findElements("class", "provider-price ")
+    w2 <- remDr$findElements("class", "provider-price")
     while(viajes < length(w2)){
       viajes <- length(w2)
       remDr$executeScript("window.scrollTo(0, 5000)")
       Sys.sleep(runif(n = 1, min = 2, max = 3))
-      w2 <- remDr$findElements("class", "provider-price ")
+      w2 <- remDr$findElements("class", "provider-price")
       # Sys.sleep(0.5)
     } 
     
@@ -113,7 +116,7 @@ for (i in 1:length(destinos$url)){
     ##################################################
     
     # Detectar los precios dentro de la pagina
-    w2 <- remDr$findElements("class", "provider-price ")
+    w2 <- remDr$findElements("class", "provider-price")
     # Convertir Dichos precios en Vector de datos
     precios <- unlist(lapply(w2, function(x){x$getElementText()}))
     precios <- unlist(strsplit(precios, "[\n]"))
@@ -122,8 +125,15 @@ for (i in 1:length(destinos$url)){
     # Este capta los horarios y el tipo de servicio.
     w3 <- remDr$findElements("class", "schedules-results-font")
     caracteristicas <- unlist(lapply(w3, function(x){x$getElementText()}))
-    caracteristicas <- unlist(strsplit(caracteristicas, "[\n]"))
+    caracteristicas <- tryCatch(unlist(strsplit(caracteristicas, "[\n]")), 
+                                error = function(e){
+                                  print("Error!")
+                                }
+                                )
     caracteristicas
+    
+    if(caracteristicas == "Error!") remDr$goBack()
+    else{
     
     ##############
     # ESTRUCTURA #
@@ -155,13 +165,23 @@ for (i in 1:length(destinos$url)){
     origen <- rep(as.character(origen.destino$origen[i]), length(precios))
     destino <- rep(as.character(origen.destino$destino[i]), length(precios))
     fecha.col <- rep(fecha, times = length(precios))
-    datos <- rbind(datos, cbind(origen, destino, precios, proveedor, datos.hora.servicio, fecha.col))
+    datos <<- rbind(datos, cbind(origen, destino, precios, proveedor, datos.hora.servicio, fecha.col))
    #Sys.sleep(runif(n = 1, min = 3, max = 5))
-   remDr$goBack()
-   Sys.sleep(runif(n = 1, min = 3, max = 5))
+    remDr$goBack()
+    Sys.sleep(runif(n = 1, min = 3, max = 5))
+    } #fin del else
   }
-  
 }
+
+#} #fin de la funcion
+
+# tryCatch(programa(i = 1),
+#          error = function(e){
+#            "Error grande!"
+#          }
+#   )
+
+
 print(i)
 print(j - 1)
 Resultados <- as.data.frame(datos)
